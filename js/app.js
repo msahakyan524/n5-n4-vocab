@@ -263,10 +263,16 @@ function renderCard(){
   $("#cardFront").innerHTML = `
     <div class="fc-jp">${w.jp}</div>
     ${w.rd ? `<div class="fc-reading">${w.rd}</div>` : ""}`;
+  // on the back, show kanji only (never hiragana/katakana); katakana/kana-only
+  // words show just their meaning + picture
+  const hasKanji = /[㐀-䶿一-鿿]/.test(w.jp);
+  const subParts = [];
+  if(hasKanji) subParts.push(w.jp);
+  if(state.lang !== "en" && w.en !== w[state.lang]) subParts.push(w.en);
   $("#cardBack").innerHTML = `
     <div class="fc-pic">${pictureFor(w)}</div>
     <div class="fc-mean">${w[state.lang]}</div>
-    <div class="fc-mean-sub">${w.rd || w.jp}${state.lang !== "en" && w.en !== w[state.lang] ? " · " + w.en : ""}</div>`;
+    <div class="fc-mean-sub">${subParts.join(" · ")}</div>`;
 }
 
 function flip(){ state.flipped = !state.flipped; $("#flashcard").classList.toggle("is-flipped", state.flipped); }
