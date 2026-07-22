@@ -6,6 +6,7 @@ const state = {
   specified: new Set(),   // word ids chosen in "specify" (subset of selected lessons)
   deck: [], index: 0, flipped: false,
   known: new Set(), review: new Set(), deckTitle: "", sourceWords: [],
+  favorites: new Set(JSON.parse(localStorage.getItem("favorites") || "[]")),
 };
 
 const $  = (s, r=document) => r.querySelector(s);
@@ -13,6 +14,51 @@ const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 
 const t = (k) => (UI[state.lang] && UI[state.lang][k]) || UI.en[k] || k;
 const lkey = (b, l) => b + "|" + l;
+const wordById = new Map(WORDS.map(w => [w.id, w]));
+
+/* Build the front-of-card markup with real furigana: the small reading sits
+   only above the kanji part of the word, not above a trailing hiragana
+   ending (e.g. します in 留学します) since that part is already plain kana. */
+function frontFurigana(w){
+  if(!w.rd) return `<div class="fc-jp-line">${w.jp}</div>`;
+  const isHiragana = ch => /[ぁ-んー]/.test(ch);
+  let cut = w.jp.length;
+  while(cut > 0 && isHiragana(w.jp[cut - 1])) cut--;
+  const kanjiPart = w.jp.slice(0, cut);
+  const suffix = w.jp.slice(cut);
+  if(!kanjiPart) return `<div class="fc-jp-line">${w.jp}</div>`;   // whole word is kana, no furigana needed
+  const reading = suffix ? w.rd.slice(0, w.rd.length - suffix.length) : w.rd;
+  return `<div class="fc-jp-line"><ruby>${kanjiPart}<rt class="fc-reading">${reading}</rt></ruby>${suffix}</div>`;
+}
+
+/* shrink the word on the front of the card just enough to keep it on one
+   line, in case the furigana is wide enough to push it past the card edge */
+function fitFrontLine(){
+  const line = $("#cardFront .fc-jp-line");
+  const face = $("#cardFront");
+  if(!line || !face) return;
+  line.style.fontSize = "";
+  const maxWidth = face.clientWidth - 40; // roughly matches the card's own padding
+  let size = parseFloat(getComputedStyle(line).fontSize);
+  let guard = 30;
+  while(line.scrollWidth > maxWidth && size > 18 && guard-- > 0){
+    size -= 2;
+    line.style.fontSize = size + "px";
+  }
+}
+
+/* save the in-progress flashcard session so a page refresh doesn't lose it */
+function persistSession(){
+  const session = JSON.parse(localStorage.getItem("session") || "{}");
+  session.view = document.body.dataset.view;
+  session.deckIds = state.deck.map(w => w.id);
+  session.sourceIds = state.sourceWords.map(w => w.id);
+  session.index = state.index;
+  session.known = [...state.known];
+  session.review = [...state.review];
+  session.deckTitle = state.deckTitle;
+  localStorage.setItem("session", JSON.stringify(session));
+}
 
 /* words present for a given book+lesson */
 const hasWords = (b, l) => WORDS.some(w => w.b === b && w.l === l);
@@ -43,6 +89,10 @@ function applyI18n(){
 function setView(name){
   document.body.dataset.view = name;
   window.scrollTo({top:0, behavior:"instant"});
+  // remember which screen was open, so a refresh can return to it
+  const session = JSON.parse(localStorage.getItem("session") || "{}");
+  session.view = name;
+  localStorage.setItem("session", JSON.stringify(session));
 }
 /* go() = navigate AND add a step to browser history, so the back/forward
    arrows move between screens instead of leaving the site. */
@@ -245,6 +295,8 @@ function startDeck(words, title){
 function renderCard(){
   const w = state.deck[state.index];
   if(!w) return;
+  $("#soundBtn").hidden = !canSpeak;
+  $("#favBtn").classList.toggle("is-fav", state.favorites.has(w.id));
   const done = state.known.size + state.review.size;
   $("#deckProgress").textContent =
     `${state.index+1} / ${state.deck.length}  ·  ${t("known")} ${state.known.size}  ·  ${t("review")} ${state.review.size}`;
@@ -260,19 +312,31 @@ function renderCard(){
   void fc.offsetWidth;              // force the browser to apply it now
   inner.style.transition = "";     // re-enable the flip animation
   state.flipped = false;
-  $("#cardFront").innerHTML = `
-    <div class="fc-jp">${w.jp}</div>
-    ${w.rd ? `<div class="fc-reading">${w.rd}</div>` : ""}`;
+  // show the reading as furigana, sitting only above the kanji part
+  $("#cardFront").innerHTML = frontFurigana(w);
+  fitFrontLine();   // shrink to fit if the furigana makes the line too wide to stay on one line
   // on the back, show kanji only (never hiragana/katakana); katakana/kana-only
   // words show just their meaning + picture
   const hasKanji = /[㐀-䶿一-鿿]/.test(w.jp);
   const subParts = [];
   if(hasKanji) subParts.push(w.jp);
   if(state.lang !== "en" && w.en !== w[state.lang]) subParts.push(w.en);
+  const pic = pictureFor(w);
   $("#cardBack").innerHTML = `
-    <div class="fc-pic">${pictureFor(w)}</div>
+    ${pic ? `<div class="fc-pic">${pic}</div>` : ""}
     <div class="fc-mean">${w[state.lang]}</div>
     <div class="fc-mean-sub">${subParts.join(" · ")}</div>`;
+  persistSession();
+}
+
+/* speak the current card's Japanese word aloud using the browser's built-in voice */
+const canSpeak = "speechSynthesis" in window;
+function speakJapanese(text){
+  if(!canSpeak || !text) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ja-JP";
+  speechSynthesis.speak(u);
 }
 
 function flip(){ state.flipped = !state.flipped; $("#flashcard").classList.toggle("is-flipped", state.flipped); }
@@ -315,6 +379,27 @@ function markCard(isKnown){
   else finishDeck();
 }
 
+/* keyboard version of marking known/review: slide the card up (known)
+   or down (unknown) so it matches the swipe gesture visually */
+function markCardWithSlide(isKnown){
+  const w = state.deck[state.index];
+  if(!w) return;
+  const card = $("#flashcard");
+  card.style.transition = "transform .22s ease, opacity .22s ease";
+  card.style.transform = `translateY(${isKnown ? -60 : 60}px)`;
+  card.style.opacity = "0";
+  setTimeout(() => {
+    markCard(isKnown);   // updates state and (if not finished) re-renders the next card
+    card.style.transition = "none";
+    card.style.transform = `translateY(${isKnown ? 60 : -60}px)`;
+    card.style.opacity = "0";
+    void card.offsetWidth;
+    card.style.transition = "transform .22s ease, opacity .22s ease";
+    card.style.transform = "translateY(0)";
+    card.style.opacity = "1";
+  }, 220);
+}
+
 /* show / hide the end-of-deck screen */
 function showDone(on){
   $("#cardStage").hidden = on;
@@ -333,6 +418,7 @@ function finishDeck(){
   rBtn.textContent = t("review_again");
   $("#restartBtn").textContent = t("restart");
   showDone(true);
+  persistSession();
 }
 
 /* ---- swipe gesture on the card (right = known, left = review) ---- */
@@ -392,6 +478,33 @@ function toggleTheme(){
 function persist(){
   localStorage.setItem("lang", state.lang);
   localStorage.setItem("selected", JSON.stringify([...state.selected]));
+  localStorage.setItem("favorites", JSON.stringify([...state.favorites]));
+}
+
+/* bring back an in-progress flashcard session after a page refresh.
+   Returns true if a session was actually restored. */
+function restoreSession(){
+  let session;
+  try { session = JSON.parse(localStorage.getItem("session") || "null"); }
+  catch(e){ session = null; }
+  if(!session || session.view !== "cards" || !Array.isArray(session.deckIds) || !session.deckIds.length) return false;
+
+  const deck = session.deckIds.map(id => wordById.get(id)).filter(Boolean);
+  if(!deck.length) return false;
+  const sourceWords = (session.sourceIds || []).map(id => wordById.get(id)).filter(Boolean);
+
+  state.deck = deck;
+  state.sourceWords = sourceWords.length ? sourceWords : deck.slice();
+  state.index = Math.min(Math.max(session.index || 0, 0), deck.length - 1);
+  state.known = new Set(session.known || []);
+  state.review = new Set(session.review || []);
+  state.deckTitle = session.deckTitle || t("flashcards");
+  $("#deckTitle").textContent = state.deckTitle;
+  document.body.dataset.view = "cards";
+
+  if(state.known.size + state.review.size >= state.deck.length) finishDeck();
+  else { showDone(false); renderCard(); }
+  return true;
 }
 
 /* ================= Wire up ================= */
@@ -400,7 +513,8 @@ function init(){
   renderBooks();
   applyI18n();
   $("#themeToggle").addEventListener("click", toggleTheme);
-  history.replaceState({view:"home"}, ""); // first history step
+  const restored = restoreSession();   // put a refreshed page back where it left off
+  history.replaceState({view: restored ? "cards" : "home"}, ""); // first history step
   window.addEventListener("popstate", e => setView((e.state && e.state.view) || "home"));
 
   $("#langSelect").addEventListener("change", e => { state.lang = e.target.value; persist(); applyI18n(); });
@@ -430,6 +544,21 @@ function init(){
   // flashcard controls
   enableSwipe();
   $("#flipBtn").addEventListener("click", flip);
+  $("#soundBtn").addEventListener("click", () => {
+    const w = state.deck[state.index];
+    if(w) speakJapanese(w.jp);
+  });
+  // the star sits inside the flashcard, so stop its taps from also
+  // triggering the card's own tap-to-flip / swipe behavior
+  $("#favBtn").addEventListener("pointerdown", e => e.stopPropagation());
+  $("#favBtn").addEventListener("click", () => {
+    const w = state.deck[state.index];
+    if(!w) return;
+    if(state.favorites.has(w.id)) state.favorites.delete(w.id);
+    else state.favorites.add(w.id);
+    persist();
+    $("#favBtn").classList.toggle("is-fav", state.favorites.has(w.id));
+  });
   $("#nextBtn").addEventListener("click", nextCard);
   $("#prevBtn").addEventListener("click", prevCard);
   $("#shuffleBtn").addEventListener("click", shuffleDeck);
@@ -442,6 +571,8 @@ function init(){
     if(document.body.dataset.view !== "cards") return;
     if(e.key === "ArrowRight") nextCard();
     if(e.key === "ArrowLeft") prevCard();
+    if(e.key === "ArrowUp"){ e.preventDefault(); markCardWithSlide(true); }
+    if(e.key === "ArrowDown"){ e.preventDefault(); markCardWithSlide(false); }
     if(e.key === " " || e.key === "Enter"){ e.preventDefault(); flip(); }
   });
 }

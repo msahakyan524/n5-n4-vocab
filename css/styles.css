@@ -174,6 +174,7 @@ body[data-view="cards"]   .view--cards{display:block}
 
 /* ===== Flashcards ===== */
 .card-stage{display:flex;flex-direction:column;align-items:center;margin-top:8px}
+.sound-btn{margin-bottom:12px}
 .flashcard{position:relative;width:min(100%,420px);aspect-ratio:3/4;max-height:60vh;perspective:1200px;cursor:pointer;
   touch-action:pan-y;will-change:transform}
 
@@ -182,6 +183,8 @@ body[data-view="cards"]   .view--cards{display:block}
   padding:8px 14px;border-radius:var(--r-sm);color:var(--ink);opacity:0;pointer-events:none;transition:opacity .1s ease}
 .swipe-badge--known{right:16px;background:var(--good);color:var(--bg);transform:rotate(8deg)}
 .swipe-badge--again{left:16px;background:var(--bad);transform:rotate(-8deg)}
+.fav-btn{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:6;width:34px;height:34px}
+.fav-btn.is-fav{background:var(--primary);color:var(--on-primary)}
 .flashcard__inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.4,.15,.2,1);
   transform-style:preserve-3d}
 .flashcard.is-flipped .flashcard__inner{transform:rotateY(180deg)}
@@ -191,8 +194,8 @@ body[data-view="cards"]   .view--cards{display:block}
   padding:20px;text-align:center;border:1px solid var(--line)}
 .flashcard__front{background:var(--surface)}
 .flashcard__back{transform:rotateY(180deg);background:var(--surface-2)}
-.fc-jp{font-family:var(--display);font-weight:700;font-size:clamp(40px,12vw,64px);line-height:1.1}
-.fc-reading{font-size:14px;color:var(--ink-soft);margin-top:10px}
+.fc-jp-line{font-family:var(--display);font-weight:700;font-size:clamp(40px,12vw,64px);line-height:1.1;ruby-position:over;white-space:nowrap;display:inline-block;max-width:100%}
+.fc-reading{font-size:12px;font-weight:400;color:var(--ink-soft)}
 .fc-pic{width:120px;height:120px;margin-bottom:8px}
 .fc-pic svg{width:100%;height:100%;filter:grayscale(1) contrast(1.05)}
 .fc-mean{font-family:var(--display);font-weight:700;font-size:16px;margin-top:4px}
@@ -260,8 +263,8 @@ body[data-view="specify"] .actionbar{display:flex}
 .btn{font-size:14px}
 .flip{text-transform:uppercase;letter-spacing:2.5px}
 /* Japanese set in a calligraphic serif */
-.fc-jp{font-family:var(--display);font-weight:700;letter-spacing:2px}
-.fc-reading{font-family:var(--display);letter-spacing:1px}
+.fc-jp-line{letter-spacing:2px}
+.fc-reading{font-family:var(--display);letter-spacing:.5px}
 .fc-mean{letter-spacing:.5px}
 .word-row .jp,.check-word .jp{font-family:var(--display)}
 #deckTitle,.subhead h2{letter-spacing:.5px}

@@ -189,16 +189,11 @@ const IMG = {
   museum:`<path d="M32 8l22 12H10z" fill="#ff7a9c"/><rect x="14" y="20" width="6" height="26" fill="#ffd9e2"/><rect x="26" y="20" width="6" height="26" fill="#ffd9e2"/><rect x="38" y="20" width="6" height="26" fill="#ffd9e2"/><rect x="8" y="46" width="48" height="6" fill="#d94f74"/>`,
 };
 
-/* Return a full SVG string for a word. Falls back to a letter card. */
+/* Return a full SVG string for a word, or "" if there's no drawn picture for it. */
 function pictureFor(word){
   const key = word.img;
   if(key && IMG[key]){
     return `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img">${IMG[key]}</svg>`;
   }
-  // fallback: soft card with the first Japanese character
-  const ch = (word.jp || "?").slice(0,1);
-  return `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img">
-    <rect x="6" y="6" width="52" height="52" rx="0" fill="#1c1f27" stroke="#2a2e38"/>
-    <text x="32" y="42" font-size="30" text-anchor="middle" fill="#e8e8e8" font-family="Helvetica,Arial,sans-serif" font-weight="700">${ch}</text>
-  </svg>`;
+  return "";
 }
