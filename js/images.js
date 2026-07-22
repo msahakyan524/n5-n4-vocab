@@ -1,0 +1,204 @@
+/* ====== Cartoon pictures, drawn as SVG (no image files needed) ======
+   Each entry is the inner content of a 0 0 64 64 canvas.
+   Flat, friendly style. Missing keys fall back to a clean letter card. */
+const IMG = {
+  person:`<circle cx="32" cy="20" r="10" fill="#ffcf9e"/><path d="M14 54c0-11 8-18 18-18s18 7 18 18z" fill="#6c5ce7"/>`,
+  teacher:`<rect x="6" y="10" width="34" height="24" rx="3" fill="#2bb673"/><path d="M11 16h22M11 22h16" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="48" cy="22" r="7" fill="#ffcf9e"/><path d="M38 52c0-8 5-13 10-13s10 5 10 13z" fill="#ff7a9c"/>`,
+  student:`<circle cx="32" cy="19" r="9" fill="#ffcf9e"/><path d="M16 52c0-10 7-16 16-16s16 6 16 16z" fill="#4a90e2"/><rect x="38" y="30" width="12" height="16" rx="2" fill="#ff7a9c"/>`,
+  doctor:`<circle cx="32" cy="19" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-17 17-17s17 6 17 17z" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><path d="M32 40v10M27 45h10" stroke="#ff5b6e" stroke-width="3" stroke-linecap="round"/>`,
+  worker:`<circle cx="32" cy="19" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-17 17-17s17 6 17 17z" fill="#455a7a"/><path d="M32 37l5 8-5 5-5-5z" fill="#ff7a9c"/>`,
+  engineer:`<path d="M18 26a14 14 0 0 1 28 0z" fill="#ffb703"/><rect x="16" y="26" width="32" height="5" rx="2" fill="#e8940a"/><circle cx="32" cy="46" r="11" fill="none" stroke="#6c5ce7" stroke-width="4"/><circle cx="32" cy="46" r="3" fill="#6c5ce7"/>`,
+  university:`<path d="M32 8l24 12H8z" fill="#6c5ce7"/><rect x="12" y="22" width="6" height="24" fill="#b6aef0"/><rect x="24" y="22" width="6" height="24" fill="#b6aef0"/><rect x="34" y="22" width="6" height="24" fill="#b6aef0"/><rect x="46" y="22" width="6" height="24" fill="#b6aef0"/><rect x="8" y="48" width="48" height="6" rx="2" fill="#584bd1"/>`,
+  hospital:`<rect x="12" y="16" width="40" height="38" rx="4" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><path d="M32 24v14M25 31h14" stroke="#ff5b6e" stroke-width="5" stroke-linecap="round"/><rect x="22" y="44" width="8" height="10" fill="#cfe6ff"/><rect x="34" y="44" width="8" height="10" fill="#cfe6ff"/>`,
+  bank:`<path d="M32 10l24 12H8z" fill="#2bb673"/><rect x="14" y="24" width="5" height="22" fill="#8fe0b6"/><rect x="30" y="24" width="5" height="22" fill="#8fe0b6"/><rect x="45" y="24" width="5" height="22" fill="#8fe0b6"/><rect x="8" y="48" width="48" height="6" rx="2" fill="#1f9c60"/>`,
+  book:`<path d="M32 16c-6-4-14-4-20-2v34c6-2 14-2 20 2z" fill="#6c5ce7"/><path d="M32 16c6-4 14-4 20-2v34c-6-2-14-2-20 2z" fill="#8a7bf0"/>`,
+  clock:`<circle cx="32" cy="32" r="22" fill="#fff" stroke="#6c5ce7" stroke-width="4"/><path d="M32 18v14l10 6" stroke="#2c2a3a" stroke-width="4" stroke-linecap="round" fill="none"/>`,
+  umbrella:`<path d="M32 12c14 0 24 10 24 18H8c0-8 10-18 24-18z" fill="#ff7a9c"/><path d="M32 30v18a5 5 0 0 0 10 0" stroke="#584bd1" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  bag:`<path d="M18 24h28l-3 26H21z" fill="#ff7a9c"/><path d="M24 24a8 8 0 0 1 16 0" stroke="#584bd1" stroke-width="3" fill="none"/>`,
+  camera:`<rect x="8" y="20" width="48" height="30" rx="5" fill="#455a7a"/><path d="M22 20l4-6h12l4 6" fill="#455a7a"/><circle cx="32" cy="35" r="10" fill="#cfe6ff"/><circle cx="32" cy="35" r="5" fill="#6c5ce7"/>`,
+  tv:`<rect x="8" y="14" width="48" height="32" rx="4" fill="#2c2a3a"/><rect x="13" y="19" width="38" height="22" rx="2" fill="#8fd6ff"/><path d="M24 50h16" stroke="#2c2a3a" stroke-width="4" stroke-linecap="round"/>`,
+  radio:`<rect x="8" y="24" width="48" height="28" rx="4" fill="#e8940a"/><path d="M40 24l10-12" stroke="#455a7a" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="38" r="7" fill="#fff"/><rect x="34" y="32" width="16" height="4" rx="2" fill="#fff"/><rect x="34" y="40" width="16" height="4" rx="2" fill="#fff"/>`,
+  pencil:`<path d="M14 50l4-12 24-24 8 8-24 24z" fill="#ffb703"/><path d="M42 14l8 8 4-4a4 4 0 0 0-8-8z" fill="#ff7a9c"/><path d="M14 50l4-12 4 4z" fill="#2c2a3a"/>`,
+  notebook:`<rect x="16" y="10" width="34" height="44" rx="3" fill="#4a90e2"/><rect x="22" y="10" width="28" height="44" fill="#fff"/><path d="M28 22h16M28 30h16M28 38h10" stroke="#cfe6ff" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="18" r="3" fill="#455a7a"/><circle cx="16" cy="32" r="3" fill="#455a7a"/><circle cx="16" cy="46" r="3" fill="#455a7a"/>`,
+  chair:`<path d="M20 12h6v22h-6z" fill="#8a7bf0"/><rect x="16" y="32" width="26" height="6" rx="2" fill="#6c5ce7"/><path d="M18 38v14M40 38v14" stroke="#6c5ce7" stroke-width="4" stroke-linecap="round"/>`,
+  desk:`<rect x="10" y="24" width="44" height="6" rx="2" fill="#e8940a"/><path d="M14 30v22M50 30v22" stroke="#b6720a" stroke-width="4" stroke-linecap="round"/><rect x="34" y="30" width="16" height="10" fill="#ffb703"/>`,
+  station:`<rect x="12" y="20" width="40" height="30" rx="3" fill="#6c5ce7"/><rect x="18" y="26" width="28" height="12" rx="2" fill="#cfe6ff"/><path d="M22 44h8v6h-8zM34 44h8v6h-8z" fill="#fff"/><path d="M8 20h48" stroke="#584bd1" stroke-width="4" stroke-linecap="round"/>`,
+  post:`<rect x="10" y="18" width="44" height="30" rx="4" fill="#ff7a9c"/><path d="M10 20l22 16 22-16" fill="none" stroke="#fff" stroke-width="3"/>`,
+  library:`<rect x="14" y="14" width="9" height="40" rx="2" fill="#6c5ce7"/><rect x="25" y="18" width="9" height="36" rx="2" fill="#2bb673"/><rect x="36" y="12" width="9" height="42" rx="2" fill="#ff7a9c"/><rect x="14" y="52" width="34" height="4" fill="#584bd1"/>`,
+  store:`<rect x="12" y="28" width="40" height="24" rx="2" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><path d="M10 28l4-12h36l4 12z" fill="#ff7a9c"/><path d="M18 16v12M26 16v12M34 16v12M42 16v12" stroke="#fff" stroke-width="2"/><rect x="28" y="38" width="8" height="14" fill="#6c5ce7"/>`,
+  school:`<path d="M32 10l22 12H10z" fill="#e8940a"/><rect x="14" y="22" width="36" height="30" rx="2" fill="#ffb703"/><rect x="28" y="36" width="8" height="16" fill="#6c5ce7"/><rect x="18" y="28" width="8" height="8" fill="#fff"/><rect x="38" y="28" width="8" height="8" fill="#fff"/><path d="M32 4v6" stroke="#455a7a" stroke-width="2"/><path d="M32 5h7v4h-7z" fill="#ff5b6e"/>`,
+  house:`<path d="M32 12l24 20H8z" fill="#ff7a9c"/><rect x="16" y="30" width="32" height="24" fill="#ffd9e2"/><rect x="28" y="38" width="8" height="16" fill="#6c5ce7"/><rect x="20" y="36" width="6" height="6" fill="#8fd6ff"/><rect x="38" y="36" width="6" height="6" fill="#8fd6ff"/>`,
+  cafe:`<path d="M16 24h26v14a10 10 0 0 1-20 0z" fill="#6c4a2f"/><path d="M42 26h6a5 5 0 0 1 0 10h-6" fill="none" stroke="#6c4a2f" stroke-width="3"/><rect x="14" y="46" width="30" height="4" rx="2" fill="#455a7a"/><path d="M24 12v6M32 12v6" stroke="#d6d6e4" stroke-width="2" stroke-linecap="round"/>`,
+  train:`<rect x="14" y="12" width="36" height="34" rx="6" fill="#4a90e2"/><rect x="19" y="18" width="26" height="12" rx="2" fill="#cfe6ff"/><circle cx="24" cy="38" r="3" fill="#fff"/><circle cx="40" cy="38" r="3" fill="#fff"/><path d="M20 46l-4 6M44 46l4 6" stroke="#455a7a" stroke-width="3" stroke-linecap="round"/>`,
+  bus:`<rect x="8" y="16" width="48" height="30" rx="5" fill="#ffb703"/><rect x="13" y="21" width="38" height="12" rx="2" fill="#cfe6ff"/><circle cx="20" cy="48" r="5" fill="#2c2a3a"/><circle cx="44" cy="48" r="5" fill="#2c2a3a"/>`,
+  subway:`<rect x="12" y="14" width="40" height="32" rx="6" fill="#2bb673"/><rect x="17" y="20" width="30" height="12" rx="2" fill="#cfe6ff"/><text x="32" y="43" font-size="10" fill="#fff" text-anchor="middle" font-family="sans-serif" font-weight="700">M</text><path d="M18 46l-3 6M46 46l3 6" stroke="#1f9c60" stroke-width="3" stroke-linecap="round"/>`,
+  airplane:`<path d="M6 34l52-8-8 12-14 2-6 12-4-1 1-11-16 4z" fill="#8fd6ff"/><path d="M50 26l4-8 4 2-4 8z" fill="#4a90e2"/>`,
+  ship:`<path d="M10 38h44l-6 12H16z" fill="#ff7a9c"/><rect x="24" y="24" width="16" height="14" fill="#fff"/><rect x="28" y="28" width="4" height="4" fill="#8fd6ff"/><path d="M6 52c4 3 8 3 12 0s8-3 12 0 8 3 12 0 8-3 12 0" fill="none" stroke="#4a90e2" stroke-width="3"/>`,
+  car:`<path d="M10 40l6-14h32l6 14z" fill="#ff5b6e"/><rect x="8" y="38" width="48" height="10" rx="4" fill="#ff7a9c"/><rect x="22" y="28" width="20" height="10" rx="2" fill="#cfe6ff"/><circle cx="20" cy="48" r="5" fill="#2c2a3a"/><circle cx="44" cy="48" r="5" fill="#2c2a3a"/>`,
+  bicycle:`<circle cx="18" cy="42" r="10" fill="none" stroke="#6c5ce7" stroke-width="3"/><circle cx="46" cy="42" r="10" fill="none" stroke="#6c5ce7" stroke-width="3"/><path d="M18 42l10-16h8M28 26l8 16M46 42l-8-20h6" fill="none" stroke="#ff7a9c" stroke-width="3" stroke-linecap="round"/>`,
+  taxi:`<path d="M10 40l6-14h32l6 14z" fill="#ffb703"/><rect x="8" y="38" width="48" height="10" rx="4" fill="#e8940a"/><rect x="22" y="28" width="20" height="10" rx="2" fill="#cfe6ff"/><rect x="26" y="12" width="12" height="6" rx="2" fill="#2c2a3a"/><circle cx="20" cy="48" r="5" fill="#2c2a3a"/><circle cx="44" cy="48" r="5" fill="#2c2a3a"/>`,
+  rice:`<path d="M12 34h40a20 16 0 0 1-40 0z" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><path d="M18 34a14 8 0 0 1 28 0z" fill="#fff"/><ellipse cx="32" cy="30" rx="16" ry="6" fill="#fff" stroke="#e7e7f0"/>`,
+  bread:`<path d="M12 40c0-14 40-14 40 0v6c0 3-3 4-6 4H18c-3 0-6-1-6-4z" fill="#e8940a"/><path d="M18 40c0-8 28-8 28 0" fill="#ffb703"/>`,
+  egg:`<ellipse cx="30" cy="38" rx="20" ry="14" fill="#fff"/><circle cx="34" cy="36" r="9" fill="#ffb703"/>`,
+  meat:`<ellipse cx="34" cy="34" rx="16" ry="12" fill="#ff8a8a"/><ellipse cx="34" cy="34" rx="9" ry="6" fill="#ff5b6e"/><path d="M20 26l-10-6M20 42l-10 6" stroke="#f0e6d6" stroke-width="5" stroke-linecap="round"/>`,
+  fish:`<path d="M8 32c8-12 30-12 38 0-8 12-30 12-38 0z" fill="#4a90e2"/><path d="M46 32l10-8v16z" fill="#4a90e2"/><circle cx="20" cy="30" r="2.5" fill="#fff"/>`,
+  vegetable:`<path d="M40 18l-20 26a10 10 0 0 1-8-14z" fill="#e8940a"/><path d="M40 18l6-8m-6 8l8-2" stroke="#2bb673" stroke-width="3" stroke-linecap="round"/>`,
+  fruit:`<circle cx="24" cy="42" r="9" fill="#ff5b6e"/><circle cx="42" cy="42" r="9" fill="#ff5b6e"/><path d="M24 33l6-14M42 33l-6-14" stroke="#2bb673" stroke-width="3" stroke-linecap="round"/><path d="M30 19c4-4 8-2 6 2" fill="#2bb673"/>`,
+  water:`<path d="M32 10c8 12 14 20 14 28a14 14 0 0 1-28 0c0-8 6-16 14-28z" fill="#8fd6ff"/><path d="M26 40a6 6 0 0 0 6 6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  tea:`<path d="M16 22h24v12a12 12 0 0 1-24 0z" fill="#2bb673"/><path d="M40 24h5a5 5 0 0 1 0 10h-5" fill="none" stroke="#2bb673" stroke-width="3"/><path d="M24 12v6M32 12v6" stroke="#8fe0b6" stroke-width="2" stroke-linecap="round"/><rect x="14" y="46" width="28" height="4" rx="2" fill="#1f9c60"/>`,
+  coffee:`<path d="M16 22h24v12a12 12 0 0 1-24 0z" fill="#6c4a2f"/><path d="M40 24h5a5 5 0 0 1 0 10h-5" fill="none" stroke="#6c4a2f" stroke-width="3"/><path d="M24 12v6M32 12v6" stroke="#c9a98a" stroke-width="2" stroke-linecap="round"/>`,
+  milk:`<path d="M22 20h20v6l4 6v22H18V32l4-6z" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><rect x="18" y="38" width="28" height="10" fill="#8fd6ff"/><path d="M24 42h16" stroke="#fff" stroke-width="2"/>`,
+  beer:`<rect x="16" y="20" width="24" height="32" rx="3" fill="#ffce4a"/><path d="M16 22c8-6 16-6 24 0v6H16z" fill="#fff"/><path d="M40 26h6a6 6 0 0 1 0 12h-6" fill="none" stroke="#e8940a" stroke-width="3"/>`,
+  apple:`<path d="M32 22c-8-6-22 0-18 14 2 8 10 16 18 16s16-8 18-16c4-14-10-20-18-14z" fill="#ff5b6e"/><path d="M32 22c0-6 4-10 9-10" stroke="#8a5a2f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M34 14c4-4 9-3 9-3s-1 6-6 7z" fill="#2bb673"/>`,
+
+  /* ---- family ---- */
+  father:`<circle cx="32" cy="18" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-18 17-18s17 7 17 18z" fill="#455a7a"/><path d="M28 8h8l-2 6h-4z" fill="#2c2a3a"/>`,
+  mother:`<circle cx="32" cy="18" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-18 17-18s17 7 17 18z" fill="#ff7a9c"/><path d="M22 14c0-6 20-6 20 0-2-2-18-2-20 0z" fill="#6c4a2f"/>`,
+  grandfather:`<circle cx="32" cy="20" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-18 17-18s17 7 17 18z" fill="#8a8f9c"/><path d="M25 26c2-4 12-4 14 0" fill="none" stroke="#d6d6e4" stroke-width="2"/>`,
+  grandmother:`<circle cx="32" cy="20" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-18 17-18s17 7 17 18z" fill="#d99bb0"/><path d="M22 16c0-6 20-6 20 0" fill="none" stroke="#d6d6e4" stroke-width="2"/>`,
+  uncle:`<circle cx="32" cy="19" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-18 17-18s17 7 17 18z" fill="#4a90e2"/><rect x="26" y="8" width="12" height="6" rx="2" fill="#2c2a3a"/>`,
+  aunt:`<circle cx="32" cy="19" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-18 17-18s17 7 17 18z" fill="#e8940a"/><circle cx="42" cy="16" r="3" fill="#fff"/>`,
+  son:`<circle cx="32" cy="22" r="8" fill="#ffcf9e"/><path d="M18 54c0-9 6-15 14-15s14 6 14 15z" fill="#4a90e2"/>`,
+  daughter:`<circle cx="32" cy="22" r="8" fill="#ffcf9e"/><path d="M18 54c0-9 6-15 14-15s14 6 14 15z" fill="#ff7a9c"/><path d="M24 18c0-5 16-5 16 0" fill="none" stroke="#6c4a2f" stroke-width="2"/>`,
+  grandchild:`<circle cx="32" cy="24" r="7" fill="#ffcf9e"/><path d="M20 54c0-8 5-13 12-13s12 5 12 13z" fill="#ffb703"/>`,
+  man:`<circle cx="32" cy="20" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-18 17-18s17 7 17 18z" fill="#455a7a"/>`,
+  woman:`<circle cx="32" cy="20" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-18 17-18s17 7 17 18z" fill="#ff7a9c"/><path d="M22 15c0-6 20-6 20 0" fill="none" stroke="#6c4a2f" stroke-width="2"/>`,
+  boy:`<circle cx="32" cy="23" r="8" fill="#ffcf9e"/><path d="M19 54c0-9 6-14 13-14s13 5 13 14z" fill="#4a90e2"/>`,
+  girl:`<circle cx="32" cy="23" r="8" fill="#ffcf9e"/><path d="M19 54c0-9 6-14 13-14s13 5 13 14z" fill="#ff5b6e"/><path d="M24 19c0-5 16-5 16 0" fill="none" stroke="#6c4a2f" stroke-width="2"/>`,
+
+  /* ---- body ---- */
+  hand:`<path d="M24 54V30a4 4 0 0 1 8 0v-8a4 4 0 0 1 8 0v6a4 4 0 0 1 8 0v6a4 4 0 0 1 8 0v20z" fill="#ffcf9e"/>`,
+  head:`<circle cx="32" cy="30" r="16" fill="#ffcf9e"/><path d="M18 44c0-4 28-4 28 0" fill="none" stroke="#e8b088" stroke-width="2"/>`,
+  hair:`<path d="M16 30c0-14 32-14 32 0-4-6-28-6-32 0z" fill="#3a2c1f"/>`,
+  face:`<circle cx="32" cy="32" r="18" fill="#ffcf9e"/><circle cx="25" cy="30" r="2" fill="#2c2a3a"/><circle cx="39" cy="30" r="2" fill="#2c2a3a"/><path d="M26 40c3 3 9 3 12 0" fill="none" stroke="#2c2a3a" stroke-width="2"/>`,
+  eye:`<path d="M8 32c8-12 40-12 48 0-8 12-40 12-48 0z" fill="#fff" stroke="#2c2a3a" stroke-width="1.5"/><circle cx="32" cy="32" r="8" fill="#4a90e2"/><circle cx="32" cy="32" r="3.5" fill="#2c2a3a"/>`,
+  ear:`<path d="M40 16c10 2 12 16 4 24-4 4-4 10 0 14" fill="none" stroke="#ffcf9e" stroke-width="8" stroke-linecap="round"/>`,
+  mouth:`<path d="M12 30c10 14 30 14 40 0-4 12-36 12-40 0z" fill="#c14a5c"/><path d="M18 30c8 6 20 6 28 0" fill="#fff"/>`,
+  tooth:`<path d="M32 12c-10 0-14 8-14 16 0 10 4 20 8 24 3 3 4-8 6-8s3 11 6 8c4-4 8-14 8-24 0-8-4-16-14-16z" fill="#fff" stroke="#d6d6e4"/>`,
+  foot:`<path d="M22 12h12v22c8 0 14 6 14 12 0 4-4 6-10 6H22a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6z" fill="#ffcf9e"/>`,
+  arm:`<path d="M20 14a5 5 0 0 1 10 0v18l10 10a5 5 0 0 1-7 7L20 36z" fill="#ffcf9e"/>`,
+  stomach:`<circle cx="32" cy="32" r="18" fill="#ffcf9e"/><circle cx="32" cy="34" r="3" fill="#e8b088"/>`,
+  blood:`<path d="M32 10c8 12 14 20 14 28a14 14 0 0 1-28 0c0-8 6-16 14-28z" fill="#c1362f"/>`,
+  muscle:`<path d="M16 44c0-14 8-26 20-26 8 0 12 6 12 12-6-4-14 0-14 8 8-2 14 2 14 10 0 8-8 14-18 14-8 0-14-8-14-18z" fill="#ffcf9e"/>`,
+  throat:`<circle cx="32" cy="24" r="12" fill="#ffcf9e"/><rect x="26" y="34" width="12" height="20" rx="6" fill="#ffcf9e"/>`,
+
+  /* ---- objects ---- */
+  chopsticks:`<rect x="24" y="8" width="3" height="50" rx="1.5" fill="#c9a370" transform="rotate(-6 25 33)"/><rect x="34" y="8" width="3" height="50" rx="1.5" fill="#c9a370" transform="rotate(6 35 33)"/>`,
+  spoon:`<ellipse cx="32" cy="20" rx="10" ry="14" fill="#cfd4db"/><rect x="29" y="32" width="6" height="26" rx="3" fill="#cfd4db"/>`,
+  knife:`<path d="M20 12l30 30-6 6-30-30z" fill="#cfd4db"/><rect x="14" y="42" width="16" height="8" rx="3" fill="#455a7a" transform="rotate(45 22 46)"/>`,
+  fork:`<path d="M20 10v16M27 10v16M34 10v16M27 26v32" stroke="#cfd4db" stroke-width="5" stroke-linecap="round"/><path d="M18 26h18a2 2 0 0 1 0 4H18a2 2 0 0 1 0-4z" fill="#cfd4db"/>`,
+  scissors:`<circle cx="18" cy="18" r="7" fill="none" stroke="#455a7a" stroke-width="3"/><circle cx="18" cy="46" r="7" fill="none" stroke="#455a7a" stroke-width="3"/><path d="M22 22L52 52M22 42L52 12" stroke="#cfd4db" stroke-width="3"/>`,
+  computer:`<rect x="8" y="12" width="48" height="30" rx="3" fill="#455a7a"/><rect x="13" y="17" width="38" height="20" fill="#8fd6ff"/><path d="M22 48h20l3 6H19z" fill="#2c2a3a"/>`,
+  letter_obj:`<rect x="10" y="16" width="44" height="32" rx="3" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><path d="M10 18l22 16 22-16" fill="none" stroke="#6c5ce7" stroke-width="2.5"/>`,
+  photograph:`<rect x="8" y="10" width="48" height="40" rx="3" fill="#fff" stroke="#2c2a3a" stroke-width="2"/><path d="M14 42l10-12 8 8 8-14 10 18z" fill="#8fd6ff"/><circle cx="20" cy="20" r="4" fill="#ffb703"/>`,
+  flower:`<circle cx="32" cy="32" r="6" fill="#ffb703"/><g fill="#ff7a9c"><circle cx="32" cy="18" r="7"/><circle cx="46" cy="32" r="7"/><circle cx="32" cy="46" r="7"/><circle cx="18" cy="32" r="7"/></g>`,
+  shirt:`<path d="M22 12l10 6 10-6 10 8-6 8-4-3v29H22V25l-4 3-6-8z" fill="#4a90e2"/>`,
+  gift:`<rect x="12" y="26" width="40" height="28" fill="#ff7a9c"/><rect x="12" y="26" width="40" height="8" fill="#ffb703"/><rect x="28" y="14" width="8" height="40" fill="#ffb703"/><path d="M32 14c-8 0-10-10-2-10s6 8 2 10zM32 14c8 0 10-10 2-10s-6 8-2 10z" fill="#ff5b6e"/>`,
+  luggage:`<rect x="12" y="20" width="40" height="30" rx="4" fill="#c9a370"/><path d="M24 20v-6a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v6" fill="none" stroke="#8a5a2f" stroke-width="3"/><rect x="12" y="30" width="40" height="6" fill="#8a5a2f"/>`,
+  money:`<rect x="8" y="20" width="48" height="26" rx="3" fill="#4a9d6b"/><circle cx="32" cy="33" r="8" fill="#eaeaea"/>`,
+  ticket:`<path d="M8 22a5 5 0 0 1 0 10v6a4 4 0 0 0 4 4h40a4 4 0 0 0 4-4v-6a5 5 0 0 1 0-10v-6a4 4 0 0 0-4-4H12a4 4 0 0 0-4 4z" fill="#ffb703"/><path d="M30 12v34" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/>`,
+  glasses:`<circle cx="18" cy="32" r="11" fill="none" stroke="#2c2a3a" stroke-width="3"/><circle cx="46" cy="32" r="11" fill="none" stroke="#2c2a3a" stroke-width="3"/><path d="M29 32h6" stroke="#2c2a3a" stroke-width="3"/>`,
+  hat:`<path d="M12 40c0-14 40-14 40 0z" fill="#455a7a"/><rect x="8" y="40" width="48" height="6" rx="3" fill="#2c2a3a"/>`,
+  coat:`<path d="M22 12l10 6 10-6 12 10-6 8-6-4v32H16V26l-6 4-6-8z" fill="#8a8f9c"/>`,
+  sweater:`<path d="M20 14l12 4 12-4 10 8-5 8-5-3v27H20V27l-5 3-5-8z" fill="#ff7a9c"/>`,
+  suit:`<path d="M20 12l12 6 12-6 10 8-5 8-5-3v31H20V19l-5 3-5-8z" fill="#2c2a3a"/><path d="M28 12l4 8 4-8" fill="#fff"/>`,
+  kimono:`<path d="M20 12h24l6 8-6 34H20l-6-34z" fill="#e85d75"/><path d="M32 12v42M20 12l12 8 12-8" fill="none" stroke="#ffb703" stroke-width="2"/>`,
+  battery:`<rect x="18" y="10" width="12" height="6" fill="#455a7a"/><rect x="12" y="16" width="24" height="38" rx="3" fill="#8fe0b6"/><rect x="16" y="34" width="16" height="10" fill="#2bb673"/>`,
+  box:`<path d="M8 20l24-10 24 10-24 10z" fill="#c9a370"/><path d="M8 20v26l24 10V30z" fill="#a9815a"/><path d="M56 20v26l-24 10V30z" fill="#8a5a2f"/>`,
+  switch_obj:`<rect x="18" y="12" width="28" height="40" rx="6" fill="#fff" stroke="#2c2a3a" stroke-width="2"/><circle cx="32" cy="26" r="6" fill="#ffb703"/>`,
+  park:`<path d="M32 10l10 16h-6l8 12h-8v16h-8V38h-8l8-12h-6z" fill="#2bb673"/><rect x="10" y="48" width="10" height="6" fill="#8a5a2f"/><circle cx="15" cy="42" r="7" fill="#8fe0b6"/>`,
+  calendar:`<rect x="10" y="14" width="44" height="40" rx="3" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><rect x="10" y="14" width="44" height="10" fill="#ff5b6e"/><path d="M20 10v8M44 10v8" stroke="#2c2a3a" stroke-width="3" stroke-linecap="round"/><text x="32" y="42" font-size="16" text-anchor="middle" fill="#2c2a3a" font-family="sans-serif">7</text>`,
+  poster:`<rect x="14" y="8" width="36" height="48" fill="#fff" stroke="#2c2a3a" stroke-width="2"/><circle cx="32" cy="24" r="8" fill="#ff7a9c"/><path d="M20 44h24" stroke="#8b909c" stroke-width="2"/>`,
+  vase:`<path d="M26 8h12l-2 14 6 6c3 6 3 18-10 18s-13-12-10-18l6-6z" fill="#4a90e2"/>`,
+  drawer_obj:`<rect x="10" y="10" width="44" height="44" rx="2" fill="#c9a370"/><rect x="16" y="20" width="32" height="10" rx="2" fill="#8a5a2f"/><rect x="16" y="36" width="32" height="10" rx="2" fill="#8a5a2f"/>`,
+  safe:`<rect x="10" y="10" width="44" height="44" rx="4" fill="#455a7a"/><circle cx="32" cy="32" r="12" fill="none" stroke="#cfd4db" stroke-width="3"/><circle cx="32" cy="32" r="3" fill="#cfd4db"/>`,
+  glue:`<path d="M22 10h20v10l4 4v30a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4V24l4-4z" fill="#ff7a9c"/><rect x="22" y="10" width="20" height="6" fill="#455a7a"/>`,
+  wallet:`<rect x="8" y="20" width="48" height="32" rx="4" fill="#8a5a2f"/><path d="M8 30h48" stroke="#6c4a2f" stroke-width="2"/><circle cx="44" cy="36" r="3" fill="#ffb703"/>`,
+  pet:`<circle cx="32" cy="30" r="14" fill="#e8b088"/><path d="M20 20l-2-10 8 6M44 20l2-10-8 6" fill="#e8b088"/><circle cx="26" cy="28" r="2" fill="#2c2a3a"/><circle cx="38" cy="28" r="2" fill="#2c2a3a"/>`,
+  toy:`<circle cx="32" cy="24" r="10" fill="#ff7a9c"/><rect x="24" y="34" width="16" height="18" rx="4" fill="#4a90e2"/><circle cx="28" cy="22" r="2" fill="#2c2a3a"/><circle cx="36" cy="22" r="2" fill="#2c2a3a"/>`,
+  picture:`<rect x="8" y="12" width="48" height="36" rx="2" fill="#fff" stroke="#2c2a3a" stroke-width="2"/><path d="M12 40l12-14 10 10 10-16 12 20z" fill="#8fd6ff"/><circle cx="20" cy="22" r="4" fill="#ffb703"/>`,
+
+  /* ---- nature ---- */
+  mountain:`<path d="M6 50L22 18l10 16 8-10 18 26z" fill="#8a8f9c"/><path d="M22 18l6 10-6 4-8-4z" fill="#fff"/>`,
+  sea:`<path d="M4 40c6 4 10 4 16 0s10-4 16 0 10 4 16 0 10-4 12 0v18H4z" fill="#4a90e2"/><path d="M4 30c6 4 10 4 16 0s10-4 16 0 10 4 16 0 10-4 12 0" fill="none" stroke="#8fd6ff" stroke-width="3"/>`,
+  star:`<path d="M32 8l7 16 18 2-14 12 4 18-15-10-15 10 4-18-14-12 18-2z" fill="#ffb703"/>`,
+  moon:`<path d="M40 8a24 24 0 1 0 0 48 20 20 0 0 1 0-48z" fill="#e8e8e8"/>`,
+  earth:`<circle cx="32" cy="32" r="22" fill="#4a90e2"/><path d="M14 22c6 4 10-2 16 2s10-4 16 2M12 40c8-4 12 4 20 0s12 4 18-2" fill="none" stroke="#2bb673" stroke-width="4" stroke-linecap="round"/>`,
+  sun:`<circle cx="32" cy="32" r="12" fill="#ffb703"/><g stroke="#ffb703" stroke-width="3" stroke-linecap="round"><path d="M32 6v8M32 50v8M6 32h8M50 32h8M13 13l6 6M45 45l6 6M51 13l-6 6M19 45l-6 6"/></g>`,
+  river:`<path d="M8 16c8 8 0 12 8 20s0 12 8 20 0 8 8 16" fill="none" stroke="#4a90e2" stroke-width="10" stroke-linecap="round"/>`,
+  wave:`<path d="M4 30c6-8 10-8 16 0s10 8 16 0 10-8 16 0 8 6 12 4" fill="none" stroke="#4a90e2" stroke-width="5" stroke-linecap="round"/><path d="M4 42c6-8 10-8 16 0s10 8 16 0 10-8 16 0 8 6 12 4" fill="none" stroke="#8fd6ff" stroke-width="5" stroke-linecap="round"/>`,
+  fireworks:`<g stroke="#ff5b6e" stroke-width="3" stroke-linecap="round"><path d="M32 8v14M32 42v14M8 32h14M42 32h14M15 15l10 10M39 39l10 10M49 15l-10 10M25 39l-10 10"/></g><circle cx="32" cy="32" r="5" fill="#ffb703"/>`,
+  rain:`<path d="M18 12a14 14 0 0 1 26-6 12 12 0 0 1 12 12 10 10 0 0 1-4 20H16a11 11 0 0 1-3-22z" fill="#8b909c"/><g stroke="#4a90e2" stroke-width="3" stroke-linecap="round"><path d="M20 44v10M32 44v10M44 44v10"/></g>`,
+  snow:`<path d="M18 12a14 14 0 0 1 26-6 12 12 0 0 1 12 12 10 10 0 0 1-4 20H16a11 11 0 0 1-3-22z" fill="#8b909c"/><g stroke="#fff" stroke-width="2.5"><path d="M22 48v8M22 52h0M28 50v8M38 50v8M44 48v8"/></g><g fill="#fff"><circle cx="22" cy="52" r="1.5"/><circle cx="32" cy="54" r="1.5"/><circle cx="44" cy="52" r="1.5"/></g>`,
+  cloud:`<path d="M18 40a14 14 0 0 1 26-6 12 12 0 0 1 12 12 10 10 0 0 1-4 8H16a11 11 0 0 1-3-14z" fill="#cfd4db"/>`,
+  sunny:`<circle cx="32" cy="32" r="12" fill="#ffb703"/><g stroke="#ffb703" stroke-width="3" stroke-linecap="round"><path d="M32 6v8M32 50v8M6 32h8M50 32h8"/></g>`,
+
+  /* ---- seasons ---- */
+  spring:`<circle cx="32" cy="32" r="6" fill="#ffb703"/><g fill="#ff9ab5"><circle cx="32" cy="18" r="7"/><circle cx="46" cy="32" r="7"/><circle cx="32" cy="46" r="7"/><circle cx="18" cy="32" r="7"/></g>`,
+  summer:`<circle cx="32" cy="32" r="14" fill="#ffb703"/><g stroke="#ffb703" stroke-width="4" stroke-linecap="round"><path d="M32 4v8M32 52v8M4 32h8M52 32h8M12 12l6 6M46 46l6 6M52 12l-6 6M18 46l-6 6"/></g>`,
+  autumn:`<path d="M32 10c-6 6-16 8-16 20 0 10 8 18 16 18s16-8 16-18c0-12-10-14-16-20z" fill="#e8940a"/><path d="M32 10v10" stroke="#8a5a2f" stroke-width="2"/>`,
+  winter:`<path d="M32 6v52M10 18l44 28M54 18L10 46" stroke="#8fd6ff" stroke-width="4" stroke-linecap="round"/>`,
+
+  /* ---- colors ---- */
+  white_color:`<circle cx="32" cy="32" r="20" fill="#fff" stroke="#2c2a3a" stroke-width="2"/>`,
+  black_color:`<circle cx="32" cy="32" r="20" fill="#2c2a3a"/>`,
+  red_color:`<circle cx="32" cy="32" r="20" fill="#e8453c"/>`,
+  blue_color:`<circle cx="32" cy="32" r="20" fill="#4a90e2"/>`,
+  brown_color:`<circle cx="32" cy="32" r="20" fill="#8a5a2f"/>`,
+
+  /* ---- food (extra) ---- */
+  cake:`<path d="M14 34h36v14a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z" fill="#ffd9e2"/><path d="M14 34c0-8 36-8 36 0" fill="#ff7a9c"/><circle cx="32" cy="18" r="3" fill="#ff5b6e"/><rect x="30" y="20" width="4" height="8" fill="#ffb703"/>`,
+  noodles:`<path d="M12 26h40v10a20 8 0 0 1-40 0z" fill="#fff" stroke="#d6d6e4"/><path d="M18 26c0-6 4-10 4-16M32 26c0-6 4-10 4-16M46 26c0-6-4-10-4-16" fill="none" stroke="#ffb703" stroke-width="3" stroke-linecap="round"/>`,
+  salt:`<path d="M20 24h24l4 26a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4z" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><rect x="24" y="12" width="16" height="12" fill="#cfd4db"/>`,
+  sugar:`<path d="M20 24h24l4 26a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4z" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><rect x="24" y="12" width="16" height="12" fill="#4a90e2"/>`,
+  soysauce:`<rect x="24" y="10" width="16" height="14" fill="#2c2a3a"/><path d="M20 24h24l2 28a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4z" fill="#455a7a"/>`,
+  miso:`<path d="M14 24h36v22a6 6 0 0 1-6 6H20a6 6 0 0 1-6-6z" fill="#c9a370"/><ellipse cx="32" cy="24" rx="18" ry="5" fill="#a9815a"/>`,
+  vinegar:`<rect x="26" y="8" width="12" height="10" fill="#8a8f9c"/><path d="M22 18h20l4 32a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4z" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/>`,
+  orange:`<circle cx="32" cy="34" r="18" fill="#ffa733"/><path d="M32 16v-4M28 12h8" stroke="#2bb673" stroke-width="3" stroke-linecap="round"/>`,
+
+  /* ---- animals ---- */
+  bird:`<path d="M14 34c4-10 16-14 26-8 8 4 12 2 14-2-2 8-8 12-14 12 2 4 2 8-2 10-10 4-20 0-24-12z" fill="#4a90e2"/><circle cx="42" cy="26" r="2" fill="#2c2a3a"/>`,
+  horse:`<path d="M20 50V32c0-12 8-20 18-20 6 0 8 4 6 8-6-2-10 2-10 8v22z" fill="#8a5a2f"/><path d="M38 12l8-4-2 8z" fill="#3a2c1f"/>`,
+  dog:`<circle cx="30" cy="30" r="14" fill="#c9a370"/><path d="M18 20l-6-8 10 4M42 20l6-8-10 4" fill="#8a5a2f"/><circle cx="26" cy="28" r="2" fill="#2c2a3a"/><circle cx="35" cy="28" r="2" fill="#2c2a3a"/><ellipse cx="30" cy="35" rx="3" ry="2" fill="#2c2a3a"/>`,
+  cat:`<circle cx="32" cy="32" r="14" fill="#e8940a"/><path d="M20 22l-4-10 10 6M44 22l4-10-10 6" fill="#e8940a"/><circle cx="27" cy="30" r="2" fill="#2c2a3a"/><circle cx="37" cy="30" r="2" fill="#2c2a3a"/><path d="M32 34l-3 3M32 34l3 3" stroke="#2c2a3a" stroke-width="1.5"/>`,
+
+  /* ---- documents ---- */
+  stamp:`<rect x="12" y="12" width="40" height="40" fill="#ff7a9c"/><circle cx="32" cy="32" r="10" fill="#fff"/><path d="M12 12h40v40H12z" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="4 3"/>`,
+  postcard:`<rect x="8" y="16" width="48" height="32" fill="#fff" stroke="#2c2a3a" stroke-width="2"/><path d="M32 16v32" stroke="#d6d6e4" stroke-width="2"/><rect x="40" y="20" width="10" height="12" fill="#ff7a9c"/>`,
+  envelope:`<rect x="8" y="16" width="48" height="32" rx="2" fill="#fff" stroke="#2c2a3a" stroke-width="2"/><path d="M8 18l24 18 24-18" fill="none" stroke="#2c2a3a" stroke-width="2"/>`,
+  passport:`<rect x="16" y="8" width="32" height="48" rx="2" fill="#4a5fa3"/><circle cx="32" cy="30" r="8" fill="#ffb703"/>`,
+  map:`<path d="M8 14l16-4 16 4 16-4v40l-16 4-16-4-16 4z" fill="#f0e6d6" stroke="#c9a370"/><path d="M24 10v40M40 14v40" stroke="#c9a370"/>`,
+  news:`<rect x="8" y="14" width="48" height="36" fill="#fff" stroke="#2c2a3a" stroke-width="2"/><rect x="14" y="20" width="16" height="12" fill="#8fd6ff"/><path d="M34 22h16M34 28h16M14 38h36M14 44h36" stroke="#2c2a3a" stroke-width="2"/>`,
+
+  /* ---- hobbies / sports ---- */
+  golf:`<path d="M20 54V14l24 10-24 10z" fill="#2bb673"/><circle cx="20" cy="54" r="4" fill="#fff" stroke="#d6d6e4"/>`,
+  judo:`<rect x="20" y="10" width="24" height="30" rx="4" fill="#fff" stroke="#2c2a3a" stroke-width="2"/><path d="M20 40l-6 14M44 40l6 14" stroke="#2c2a3a" stroke-width="4" stroke-linecap="round"/>`,
+  karaoke:`<rect x="18" y="16" width="10" height="26" rx="5" fill="#455a7a"/><circle cx="23" cy="14" r="8" fill="#cfd4db"/><path d="M38 20v20a6 6 0 1 1-4-5.6V26z" fill="#ff7a9c"/>`,
+  kabuki:`<path d="M14 32c0-14 36-14 36 0v10c0 10-8 18-18 18s-18-8-18-18z" fill="#ff5b6e"/><path d="M22 30l4 6M42 30l-4 6" stroke="#2c2a3a" stroke-width="2"/><path d="M26 20c2-6 10-6 12 0" fill="none" stroke="#2c2a3a" stroke-width="2"/>`,
+  piano:`<path d="M8 24h48v22H8z" fill="#2c2a3a"/><path d="M10 24h6v14h-6zM19 24h6v14h-6zM28 24h6v14h-6zM37 24h6v14h-6zM46 24h6v14h-6z" fill="#fff"/>`,
+  music:`<circle cx="18" cy="48" r="6" fill="#6c5ce7"/><circle cx="42" cy="44" r="6" fill="#6c5ce7"/><path d="M24 48V14l24-4v34" fill="none" stroke="#6c5ce7" stroke-width="3"/>`,
+  dance:`<circle cx="32" cy="14" r="7" fill="#ffcf9e"/><path d="M32 21c-10 0-8 14-16 20M32 21c10 0 8 14 16 20M32 21v18l-8 15M32 39l8 15" fill="none" stroke="#ff7a9c" stroke-width="4" stroke-linecap="round"/>`,
+  skiing:`<path d="M16 50l32-36M22 46l6-8 8 4 8-10 6 4" fill="none" stroke="#4a90e2" stroke-width="3" stroke-linecap="round"/><circle cx="44" cy="12" r="6" fill="#ffcf9e"/>`,
+  baseball:`<circle cx="32" cy="32" r="18" fill="#fff" stroke="#d6d6e4" stroke-width="2"/><path d="M18 20c6 6 6 18 0 24M46 20c-6 6-6 18 0 24" fill="none" stroke="#e8453c" stroke-width="2"/>`,
+
+  /* ---- buildings (extra) ---- */
+  hotel:`<rect x="10" y="18" width="44" height="34" fill="#455a7a"/><rect x="16" y="24" width="8" height="8" fill="#8fd6ff"/><rect x="28" y="24" width="8" height="8" fill="#8fd6ff"/><rect x="40" y="24" width="8" height="8" fill="#8fd6ff"/><rect x="16" y="36" width="8" height="8" fill="#8fd6ff"/><rect x="28" y="36" width="8" height="8" fill="#8fd6ff"/><rect x="40" y="36" width="8" height="8" fill="#8fd6ff"/>`,
+  onsen:`<circle cx="32" cy="34" r="16" fill="#4a90e2"/><path d="M24 16c2 4-2 4 0 8M32 12c2 4-2 4 0 8M40 16c2 4-2 4 0 8" fill="none" stroke="#8b909c" stroke-width="2" stroke-linecap="round"/>`,
+  cityhall:`<path d="M32 8l22 12H10z" fill="#8a8f9c"/><rect x="14" y="20" width="6" height="26" fill="#cfd4db"/><rect x="26" y="20" width="6" height="26" fill="#cfd4db"/><rect x="38" y="20" width="6" height="26" fill="#cfd4db"/><rect x="8" y="46" width="48" height="6" fill="#455a7a"/>`,
+  embassy:`<path d="M32 8l22 12H10z" fill="#4a90e2"/><rect x="14" y="20" width="36" height="26" fill="#8fd6ff"/><rect x="8" y="46" width="48" height="6" fill="#2b5fa8"/>`,
+  museum:`<path d="M32 8l22 12H10z" fill="#ff7a9c"/><rect x="14" y="20" width="6" height="26" fill="#ffd9e2"/><rect x="26" y="20" width="6" height="26" fill="#ffd9e2"/><rect x="38" y="20" width="6" height="26" fill="#ffd9e2"/><rect x="8" y="46" width="48" height="6" fill="#d94f74"/>`,
+};
+
+/* Return a full SVG string for a word. Falls back to a letter card. */
+function pictureFor(word){
+  const key = word.img;
+  if(key && IMG[key]){
+    return `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img">${IMG[key]}</svg>`;
+  }
+  // fallback: soft card with the first Japanese character
+  const ch = (word.jp || "?").slice(0,1);
+  return `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img">
+    <rect x="6" y="6" width="52" height="52" rx="0" fill="#1c1f27" stroke="#2a2e38"/>
+    <text x="32" y="42" font-size="30" text-anchor="middle" fill="#e8e8e8" font-family="Helvetica,Arial,sans-serif" font-weight="700">${ch}</text>
+  </svg>`;
+}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>語彙 — N5 / N4 vocabulary</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@500;600;700&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css?v=9" />
+</head>
+<body data-view="home">
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <div class="topbar__left">
+      <button class="icon-btn" id="themeToggle" aria-label="Switch light or dark mode" title="Light / Dark">◐</button>
+      <label class="lang" >
+        <select id="langSelect" aria-label="Translation language">
+          <option value="en">English</option>
+          <option value="ru">Русский</option>
+          <option value="hy">Հայերեն</option>
+        </select>
+      </label>
+    </div>
+
+    <button class="brand" id="brandBtn" title="Home">
+      <img src="favicon.svg" alt="goi" class="brand__logo" />
+    </button>
+
+    <div class="topbar__right">
+      <button class="pill" id="navFlashcards"><span data-i18n="flashcards">Flashcards</span></button>
+      <button class="pill pill--ghost" id="navLessons"><span data-i18n="lessons">Lessons</span></button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ===== HOME: pick many lessons (drag to select) ===== -->
+    <section class="view view--home" data-screen="home">
+      <div class="hero">
+        <h1 class="hero__title" data-i18n="home_title">Choose what to study</h1>
+        <p class="hero__sub" data-i18n="home_sub">Drag your finger across lessons to grab several at once. Mix N5 and N4 freely.</p>
+      </div>
+      <div id="booksWrap" class="books"></div>
+    </section>
+
+    <!-- ===== SPECIFY WORDS ===== -->
+    <section class="view view--specify" data-screen="specify">
+      <div class="subhead">
+        <button class="back" data-goto="home">←</button>
+        <h2 data-i18n="specify_title">Pick exact words</h2>
+      </div>
+      <div class="specify-tools">
+        <input id="wordSearch" class="search" type="search" placeholder="Search…" />
+        <button class="mini" id="selectAllWords" data-i18n="select_all">Select all</button>
+        <button class="mini" id="clearWords" data-i18n="clear">Clear</button>
+      </div>
+      <div id="specifyList" class="specify-list"></div>
+    </section>
+
+    <!-- ===== LESSONS: pick a single lesson ===== -->
+    <section class="view view--lessons" data-screen="lessons">
+      <div class="subhead">
+        <button class="back" data-goto="home">←</button>
+        <h2 data-i18n="lessons_title">Study one lesson</h2>
+      </div>
+      <div id="singleBooks" class="books books--single"></div>
+      <div id="lessonPreview" class="lesson-preview" hidden></div>
+    </section>
+
+    <!-- ===== FLASHCARDS ===== -->
+    <section class="view view--cards" data-screen="cards">
+      <div class="subhead">
+        <button class="back" data-goto="home">←</button>
+        <div class="deck-meta">
+          <span id="deckTitle">Deck</span>
+          <span id="deckProgress" class="deck-progress">0 / 0</span>
+        </div>
+        <button class="mini" id="shuffleBtn"><span data-i18n="shuffle">Shuffle</span></button>
+      </div>
+
+      <div class="card-stage" id="cardStage">
+        <div class="flashcard" id="flashcard">
+          <div class="swipe-badge swipe-badge--known" id="badgeKnown"><span data-i18n="known">Known</span></div>
+          <div class="swipe-badge swipe-badge--again" id="badgeAgain"><span data-i18n="review">Review</span></div>
+          <div class="flashcard__inner">
+            <div class="flashcard__face flashcard__front" id="cardFront"></div>
+            <div class="flashcard__face flashcard__back" id="cardBack"></div>
+          </div>
+        </div>
+        <p class="tap-hint" data-i18n="tap_hint">Tap to flip · swipe right if you know it, left to review</p>
+      </div>
+
+      <div class="card-controls" id="cardControls">
+        <button class="round" id="prevBtn" aria-label="Previous">‹</button>
+        <button class="flip" id="flipBtn" data-i18n="flip">Flip</button>
+        <button class="round" id="nextBtn" aria-label="Next">›</button>
+      </div>
+
+      <div class="deck-done" id="deckDone" hidden>
+        <h3 id="doneTitle">Session done</h3>
+        <p id="doneSub" class="deck-done__sub"></p>
+        <div class="deck-done__btns">
+          <button class="btn btn--primary" id="reviewAgainBtn" hidden></button>
+          <button class="btn btn--ghost" id="restartBtn"></button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Sticky action bar (home / specify) ===== -->
+  <div class="actionbar" id="actionbar">
+    <div class="actionbar__count"><span id="selCount">0</span> <span data-i18n="words_selected">words selected</span></div>
+    <div class="actionbar__btns">
+      <button class="btn btn--ghost" id="specifyBtn" data-i18n="specify_btn">Specify words</button>
+      <button class="btn btn--primary" id="studyBtn" data-i18n="study_btn">Study →</button>
+    </div>
+  </div>
+
+  <script src="js/data.js?v=9"></script>
+  <script src="js/words2.js?v=9"></script>
+  <script src="js/images.js?v=9"></script>
+  <script src="js/app.js?v=9"></script>
+</body>
+</html>
