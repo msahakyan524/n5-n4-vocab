@@ -202,7 +202,7 @@ function updateActionbar(){
 function syncActionbarSpace(){
   const bar = $("#actionbar");
   const shown = getComputedStyle(bar).display !== "none";
-  document.body.style.paddingBottom = shown ? (bar.offsetHeight + 16) + "px" : "16px";
+  document.body.style.paddingBottom = shown ? (bar.offsetHeight + 24) + "px" : "16px";
 }
 
 /* wipe every lesson/word pick and go back to a blank slate */
@@ -668,6 +668,11 @@ function init(){
   $("#specifyBtn").addEventListener("click", () => { renderSpecify(); go("specify"); });
   $("#deselectAllBtn").addEventListener("click", deselectAll);
   window.addEventListener("resize", syncActionbarSpace);   // bar height changes with width
+  /* Re-measure whenever the bar itself changes height. Measuring only at
+     startup left the gap a few pixels short once the web fonts arrived and
+     nudged the bar taller, which hid the word count on the very last tile. */
+  if(window.ResizeObserver) new ResizeObserver(syncActionbarSpace).observe($("#actionbar"));
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(syncActionbarSpace);
 
   $$("[data-goto]").forEach(b => b.addEventListener("click", () => history.back()));
 
