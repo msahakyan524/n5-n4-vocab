@@ -191,6 +191,17 @@ function updateActionbar(){
   $("#selCount").textContent = n;
   $("#studyBtn").disabled = n === 0;
   $("#specifyBtn").disabled = selectedWords().length === 0;
+  $("#deselectAllBtn").hidden = state.selected.size === 0 && state.specified.size === 0;
+}
+
+/* wipe every lesson/word pick and go back to a blank slate */
+function deselectAll(){
+  state.selected.clear();
+  state.specified.clear();
+  persist();
+  renderBooks();
+  if(document.body.dataset.view === "specify") renderSpecify();
+  updateActionbar();
 }
 
 /* ================= Specify words ================= */
@@ -257,7 +268,10 @@ function renderSingleBooks(){
   $("#lessonPreview").hidden = true;
 }
 
-function showLessonPreview(b, l, block){
+/* annotate=true marks each word as wrong (bold) or right (dimmed), based on
+   how the current/last finished session went — used when jumping in from
+   the results screen's "wrong answers by lesson" list */
+function showLessonPreview(b, l, block, annotate=false, focusWordId=null){
   $$("#singleBooks .tile").forEach(x=>x.classList.remove("is-selected"));
   block.querySelector(`.tile[data-book="${b}"][data-lesson="${l}"]`).classList.add("is-selected");
   const words = wordsInLesson(b, l);
@@ -265,17 +279,38 @@ function showLessonPreview(b, l, block){
   const pv = $("#lessonPreview");
   pv.hidden = false;
   pv.innerHTML = `<h3>${book.name} · ${l}</h3>` +
-    words.map(w => `
-      <div class="word-row">
+    words.map(w => {
+      const cls = annotate ? (state.review.has(w.id) ? " is-wrong" : state.known.has(w.id) ? " is-dim" : "") : "";
+      return `
+      <div class="word-row${cls}" data-word-id="${w.id}">
         <span class="jp">${w.jp}</span>
         <span class="rd">${w.rd}</span>
         <span class="tr">${w[state.lang]}</span>
-      </div>`).join("") +
+      </div>`;
+    }).join("") +
     `<button class="btn btn--primary" style="margin-top:16px;width:100%" id="studyLessonBtn">${t("study_lesson")}</button>`;
   $("#studyLessonBtn").addEventListener("click", () => {
     startDeck(words, `${book.name} · ${l}`);
   });
+  if(focusWordId){
+    const row = pv.querySelector(`.word-row[data-word-id="${focusWordId}"]`);
+    if(row){
+      row.classList.add("is-target");
+      row.scrollIntoView({behavior:"smooth", block:"center"});
+      return;
+    }
+  }
   pv.scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+
+/* jump from the results screen into a lesson's word list, optionally
+   scrolling to and highlighting one specific word the user tapped */
+function openLessonWords(b, l, annotate, focusWordId=null){
+  renderSingleBooks();
+  go("lessons");
+  const tile = $(`#singleBooks .tile[data-book="${b}"][data-lesson="${l}"]`);
+  if(!tile) return;
+  showLessonPreview(b, l, tile.closest(".book"), annotate, focusWordId);
 }
 
 /* ================= Flashcards ================= */
@@ -359,7 +394,14 @@ function advanceCard(newIndex, dir){
     card.style.opacity = "1";
   }, 220);
 }
-function nextCard(){ if(state.index < state.deck.length-1){ advanceCard(state.index+1, 1); } else finishDeck(); }
+function nextCard(){
+  if(state.index < state.deck.length-1){ advanceCard(state.index+1, 1); return; }
+  const card = $("#flashcard");
+  card.style.transition = "transform .2s ease, opacity .2s ease";
+  card.style.transform = "translateX(-50px)";
+  card.style.opacity = "0";
+  setTimeout(finishDeck, 200);   // chart then animates into the card's place
+}
 function prevCard(){ if(state.index > 0){ advanceCard(state.index-1, -1); } }
 function shuffleDeck(){
   for(let i=state.deck.length-1;i>0;i--){
@@ -384,12 +426,14 @@ function markCard(isKnown){
 function markCardWithSlide(isKnown){
   const w = state.deck[state.index];
   if(!w) return;
+  const isLastCard = state.index >= state.deck.length - 1;
   const card = $("#flashcard");
   card.style.transition = "transform .22s ease, opacity .22s ease";
   card.style.transform = `translateY(${isKnown ? -60 : 60}px)`;
   card.style.opacity = "0";
   setTimeout(() => {
-    markCard(isKnown);   // updates state and (if not finished) re-renders the next card
+    markCard(isKnown);   // updates state; last card triggers finishDeck(), which animates the chart in
+    if(isLastCard) return;   // no card left to slide back in — the chart takes its place instead
     card.style.transition = "none";
     card.style.transform = `translateY(${isKnown ? 60 : -60}px)`;
     card.style.opacity = "0";
@@ -402,19 +446,95 @@ function markCardWithSlide(isKnown){
 
 /* show / hide the end-of-deck screen */
 function showDone(on){
-  $("#cardStage").hidden = on;
-  $("#cardControls").hidden = on;
-  $("#deckDone").hidden = !on;
+  $("#cardZoneStudy").hidden = on;
+  const dd = $("#deckDone");
+  dd.hidden = !on;
+  if(on){
+    // restart the entrance animation every time the chart appears
+    dd.classList.remove("is-entering");
+    void dd.offsetWidth;
+    dd.classList.add("is-entering");
+  }
 }
-function finishDeck(){
+/* donut chart: hollow-centre ring showing known vs. unknown, with the
+   unknown % and count written in the middle */
+function buildDonut(unknownCount, total){
+  const pct = total ? Math.round((unknownCount / total) * 100) : 0;
+  const r = 54, c = 2 * Math.PI * r;
+  const unknownLen = c * (unknownCount / total);
+  const knownLen = c - unknownLen;
+  return `
+    <svg viewBox="0 0 140 140" width="140" height="140">
+      <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="16"/>
+      <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--good)" stroke-width="16"
+        stroke-dasharray="${knownLen} ${c}" transform="rotate(-90 70 70)"/>
+      <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--bad)" stroke-width="16"
+        stroke-dasharray="${unknownLen} ${c}" stroke-dashoffset="${-knownLen}" transform="rotate(-90 70 70)"/>
+      <text x="70" y="65" text-anchor="middle" class="donut-pct">${pct}%</text>
+      <text x="70" y="82" text-anchor="middle" class="donut-pct-label">${unknownCount} / ${total}</text>
+    </svg>`;
+}
+
+/* reward graphic for a perfect run: sunglasses + スゲー ("awesome") */
+function buildSugee(){
+  return `
+    <div class="sugee">
+      <svg viewBox="0 0 100 40" width="100" height="40">
+        <rect x="6" y="10" width="34" height="22" rx="6" fill="var(--ink)"/>
+        <rect x="60" y="10" width="34" height="22" rx="6" fill="var(--ink)"/>
+        <path d="M40 19h20" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+        <path d="M6 16L-2 12M94 16l8-4" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <div class="sugee-text">スゲー</div>
+    </div>`;
+}
+
+/* tally the review-marked words by lesson, worst lesson first */
+function wrongByLesson(){
   const reviewWords = state.sourceWords.filter(w => state.review.has(w.id));
+  const tally = new Map();   // "book|lesson" -> {b, l, count, words}
+  reviewWords.forEach(w => {
+    const key = w.b + "|" + w.l;
+    const entry = tally.get(key) || { b: w.b, l: w.l, count: 0, words: [] };
+    entry.count++;
+    entry.words.push(w);
+    tally.set(key, entry);
+  });
+  return [...tally.values()].sort((a, b) => b.count - a.count);
+}
+
+function finishDeck(){
   const total = state.deck.length;
-  $("#doneTitle").textContent = t("session_done");
-  $("#doneSub").textContent = reviewWords.length
-    ? `${t("known")} ${state.known.size} / ${total}  ·  ${t("review")} ${reviewWords.length}`
-    : t("done_all");
+  const unknownCount = total - state.known.size;   // review + anything left unmarked
+  $("#doneTitle").textContent = "";
+  $("#doneSub").textContent = "";
+  const graphic = $("#doneGraphic");
+  if(unknownCount === 0){
+    graphic.innerHTML = buildSugee();
+  } else {
+    const correctPct = Math.round((state.known.size / total) * 100);
+    const wrongPct = 100 - correctPct;
+    const rows = wrongByLesson();
+    graphic.innerHTML = `
+      ${buildDonut(unknownCount, total)}
+      <div class="done-stats">
+        <div class="done-stat"><div class="done-stat__pct">${correctPct}%</div><div class="done-stat__label">${t("correct")}</div></div>
+        <div class="done-stat"><div class="done-stat__pct">${wrongPct}%</div><div class="done-stat__label">${t("wrong")}</div></div>
+      </div>
+      <div class="done-breakdown">
+        ${rows.map(r => `<div class="done-breakdown__group">
+          <div class="done-breakdown__row">
+            <span class="done-breakdown__lesson" data-book="${r.b}" data-lesson="${r.l}">${t("lesson_word")} ${r.l}</span>
+            <span class="done-breakdown__count" data-book="${r.b}" data-lesson="${r.l}">${r.count}</span>
+          </div>
+          <div class="done-breakdown__words">
+            ${r.words.map(w => `<span class="done-breakdown__word" data-book="${w.b}" data-lesson="${w.l}" data-word-id="${w.id}">${w.jp}</span>`).join("")}
+          </div>
+        </div>`).join("")}
+      </div>`;
+  }
   const rBtn = $("#reviewAgainBtn");
-  rBtn.hidden = reviewWords.length === 0;
+  rBtn.hidden = state.review.size === 0;   // only offer it when there are actual review-marked words
   rBtn.textContent = t("review_again");
   $("#restartBtn").textContent = t("restart");
   showDone(true);
@@ -532,6 +652,7 @@ function init(){
     startDeck(words, t("flashcards"));
   });
   $("#specifyBtn").addEventListener("click", () => { renderSpecify(); go("specify"); });
+  $("#deselectAllBtn").addEventListener("click", deselectAll);
 
   $$("[data-goto]").forEach(b => b.addEventListener("click", () => history.back()));
 
@@ -561,6 +682,20 @@ function init(){
   });
   $("#nextBtn").addEventListener("click", nextCard);
   $("#prevBtn").addEventListener("click", prevCard);
+  // results screen: tap a lesson's count to see its words, tap the lesson
+  // name to see that same lesson with wrong/right answers marked
+  $("#doneGraphic").addEventListener("click", e => {
+    const wordEl = e.target.closest(".done-breakdown__word");
+    if(wordEl){
+      openLessonWords(wordEl.dataset.book, +wordEl.dataset.lesson, true, wordEl.dataset.wordId);
+      return;
+    }
+    const lessonEl = e.target.closest(".done-breakdown__lesson");
+    const countEl = e.target.closest(".done-breakdown__count");
+    const hit = lessonEl || countEl;
+    if(!hit) return;
+    openLessonWords(hit.dataset.book, +hit.dataset.lesson, !!lessonEl);
+  });
   $("#shuffleBtn").addEventListener("click", shuffleDeck);
   $("#reviewAgainBtn").addEventListener("click", () => {
     const reviewWords = state.sourceWords.filter(w => state.review.has(w.id));

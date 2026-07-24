@@ -6,6 +6,8 @@ const IMG = {
   teacher:`<rect x="6" y="10" width="34" height="24" rx="3" fill="#2bb673"/><path d="M11 16h22M11 22h16" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="48" cy="22" r="7" fill="#ffcf9e"/><path d="M38 52c0-8 5-13 10-13s10 5 10 13z" fill="#ff7a9c"/>`,
   student:`<circle cx="32" cy="19" r="9" fill="#ffcf9e"/><path d="M16 52c0-10 7-16 16-16s16 6 16 16z" fill="#4a90e2"/><rect x="38" y="30" width="12" height="16" rx="2" fill="#ff7a9c"/>`,
   doctor:`<circle cx="32" cy="19" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-17 17-17s17 6 17 17z" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><path d="M32 40v10M27 45h10" stroke="#ff5b6e" stroke-width="3" stroke-linecap="round"/>`,
+  nurse:`<circle cx="32" cy="19" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-17 17-17s17 6 17 17z" fill="#fff" stroke="#d6d6e4" stroke-width="1.5"/><rect x="25" y="6" width="14" height="8" rx="2" fill="#fff" stroke="#ff5b6e" stroke-width="1.5"/><path d="M30 8h4v4h-4z" fill="#ff5b6e"/>`,
+  patient:`<circle cx="32" cy="19" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-18 17-18s17 7 17 18z" fill="#8fd6ff"/><path d="M24 14l16 4M24 18l16-4" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`,
   worker:`<circle cx="32" cy="19" r="9" fill="#ffcf9e"/><path d="M15 54c0-11 8-17 17-17s17 6 17 17z" fill="#455a7a"/><path d="M32 37l5 8-5 5-5-5z" fill="#ff7a9c"/>`,
   engineer:`<path d="M18 26a14 14 0 0 1 28 0z" fill="#ffb703"/><rect x="16" y="26" width="32" height="5" rx="2" fill="#e8940a"/><circle cx="32" cy="46" r="11" fill="none" stroke="#6c5ce7" stroke-width="4"/><circle cx="32" cy="46" r="3" fill="#6c5ce7"/>`,
   university:`<path d="M32 8l24 12H8z" fill="#6c5ce7"/><rect x="12" y="22" width="6" height="24" fill="#b6aef0"/><rect x="24" y="22" width="6" height="24" fill="#b6aef0"/><rect x="34" y="22" width="6" height="24" fill="#b6aef0"/><rect x="46" y="22" width="6" height="24" fill="#b6aef0"/><rect x="8" y="48" width="48" height="6" rx="2" fill="#584bd1"/>`,
@@ -81,6 +83,15 @@ const IMG = {
   blood:`<path d="M32 10c8 12 14 20 14 28a14 14 0 0 1-28 0c0-8 6-16 14-28z" fill="#c1362f"/>`,
   muscle:`<path d="M16 44c0-14 8-26 20-26 8 0 12 6 12 12-6-4-14 0-14 8 8-2 14 2 14 10 0 8-8 14-18 14-8 0-14-8-14-18z" fill="#ffcf9e"/>`,
   throat:`<circle cx="32" cy="24" r="12" fill="#ffcf9e"/><rect x="26" y="34" width="12" height="20" rx="6" fill="#ffcf9e"/>`,
+  neck:`<rect x="24" y="10" width="16" height="30" rx="8" fill="#ffcf9e"/><path d="M20 44c0-3 24-3 24 0" fill="none" stroke="#e8b088" stroke-width="2"/>`,
+  back:`<path d="M18 12c0-4 28-4 28 0v32a14 14 0 0 1-28 0z" fill="#ffcf9e"/><path d="M32 14v32" stroke="#e8b088" stroke-width="2"/>`,
+  waist:`<path d="M14 10h36v18c0 16-8 26-18 26s-18-10-18-26z" fill="#ffcf9e"/><rect x="10" y="24" width="44" height="8" rx="4" fill="#ff7a9c"/>`,
+  buttocks:`<path d="M14 20a10 10 0 0 1 20 0v18a10 14 0 0 1-20 0z" fill="#ffcf9e"/><path d="M30 20a10 10 0 0 1 20 0v18a10 14 0 0 1-20 0z" fill="#ffcf9e"/>`,
+  chest:`<path d="M12 44c0-14 8-24 20-24s20 10 20 24c0 6-8 10-20 10s-20-4-20-10z" fill="#ffcf9e"/><path d="M32 44V22" stroke="#e8b088" stroke-width="2"/>`,
+  elbow:`<path d="M14 50l8-20 18-4 6 10-16 4-4 14z" fill="#ffcf9e"/><circle cx="34" cy="28" r="5" fill="#ff5b6e"/>`,
+  knee:`<rect x="25" y="6" width="12" height="28" rx="6" fill="#ffcf9e"/><rect x="27" y="28" width="12" height="28" rx="6" fill="#ffcf9e" transform="rotate(18 33 42)"/><circle cx="31" cy="30" r="6" fill="#ff5b6e"/>`,
+  toe:`<path d="M22 12h12v22c8 0 14 6 14 12 0 4-4 6-10 6H22a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6z" fill="#ffcf9e"/><circle cx="44" cy="44" r="5" fill="#ff5b6e"/>`,
+  heel:`<path d="M22 12h12v22c8 0 14 6 14 12 0 4-4 6-10 6H22a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6z" fill="#ffcf9e"/><circle cx="19" cy="49" r="6" fill="#ff5b6e"/>`,
 
   /* ---- objects ---- */
   chopsticks:`<rect x="24" y="8" width="3" height="50" rx="1.5" fill="#c9a370" transform="rotate(-6 25 33)"/><rect x="34" y="8" width="3" height="50" rx="1.5" fill="#c9a370" transform="rotate(6 35 33)"/>`,
@@ -117,6 +128,9 @@ const IMG = {
   pet:`<circle cx="32" cy="30" r="14" fill="#e8b088"/><path d="M20 20l-2-10 8 6M44 20l2-10-8 6" fill="#e8b088"/><circle cx="26" cy="28" r="2" fill="#2c2a3a"/><circle cx="38" cy="28" r="2" fill="#2c2a3a"/>`,
   toy:`<circle cx="32" cy="24" r="10" fill="#ff7a9c"/><rect x="24" y="34" width="16" height="18" rx="4" fill="#4a90e2"/><circle cx="28" cy="22" r="2" fill="#2c2a3a"/><circle cx="36" cy="22" r="2" fill="#2c2a3a"/>`,
   picture:`<rect x="8" y="12" width="48" height="36" rx="2" fill="#fff" stroke="#2c2a3a" stroke-width="2"/><path d="M12 40l12-14 10 10 10-16 12 20z" fill="#8fd6ff"/><circle cx="20" cy="22" r="4" fill="#ffb703"/>`,
+  mask:`<circle cx="32" cy="30" r="18" fill="#ffcf9e"/><path d="M14 32a18 18 0 0 0 36 0v6c0 8-8 14-18 14s-18-6-18-14z" fill="#cfe6ff" stroke="#4a90e2" stroke-width="1.5"/>`,
+  eyedrops:`<rect x="26" y="22" width="12" height="30" rx="3" fill="#8fd6ff" stroke="#4a90e2" stroke-width="1.5"/><rect x="29" y="12" width="6" height="12" fill="#4a90e2"/><rect x="27" y="8" width="10" height="6" rx="2" fill="#455a7a"/>`,
+  capsule:`<rect x="10" y="26" width="44" height="16" rx="8" fill="#ff7a9c"/><rect x="10" y="26" width="22" height="16" rx="8" fill="#fff" stroke="#d6d6e4" stroke-width="1"/>`,
 
   /* ---- nature ---- */
   mountain:`<path d="M6 50L22 18l10 16 8-10 18 26z" fill="#8a8f9c"/><path d="M22 18l6 10-6 4-8-4z" fill="#fff"/>`,

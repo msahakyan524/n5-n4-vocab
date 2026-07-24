@@ -173,6 +173,11 @@ body[data-view="cards"]   .view--cards{display:block}
 .check-word .tr{margin-left:auto;color:var(--ink-soft);font-size:14px;text-align:right}
 
 /* ===== Flashcards ===== */
+/* the "studying" state and the results screen share this exact box, so
+   swapping between them never leaves a gap or shifts things down */
+.card-zone{display:grid}
+#cardZoneStudy,.deck-done{grid-row:1;grid-column:1}
+
 .card-stage{display:flex;flex-direction:column;align-items:center;margin-top:8px}
 .sound-btn{margin-bottom:12px}
 .flashcard{position:relative;width:min(100%,420px);aspect-ratio:3/4;max-height:60vh;perspective:1200px;cursor:pointer;
@@ -229,10 +234,45 @@ body[data-view="specify"] .actionbar{display:flex}
 .empty-note{text-align:center;color:var(--ink-soft);padding:40px 20px}
 
 /* end-of-deck screen */
-.deck-done{text-align:center;padding:32px 20px;max-width:420px;margin:0 auto;animation:fade .3s ease}
+.deck-done{text-align:center;padding:32px 20px;max-width:420px;margin:0 auto}
+.deck-done.is-entering{animation:done-in .45s cubic-bezier(.4,.1,.15,1)}
+@keyframes done-in{from{opacity:0;transform:translateY(28px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 .deck-done h3{font-size:16px;margin-top:8px}
 .deck-done__sub{color:var(--ink-soft);margin-top:6px;font-size:16px}
 .deck-done__btns{display:flex;flex-direction:column;gap:10px;margin-top:24px}
+
+/* donut chart on the results screen */
+.done-graphic{display:flex;flex-direction:column;align-items:center;margin-top:20px}
+.donut-pct{font-family:var(--display);font-weight:700;font-size:24px;fill:var(--ink)}
+.donut-pct-label{font-family:var(--font);font-weight:400;font-size:12px;fill:var(--ink-soft);text-transform:uppercase;letter-spacing:1px}
+
+/* perfect-score reward */
+.sugee{display:flex;flex-direction:column;align-items:center;gap:12px}
+.sugee-text{font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:2px;color:var(--ink)}
+
+/* correct/wrong % badges, deliberately inverted vs. the page's own colors */
+.done-stats{display:flex;gap:10px;justify-content:center;margin-top:18px}
+.done-stat{background:var(--primary);color:var(--on-primary);padding:10px 18px;min-width:88px}
+.done-stat__pct{font-family:var(--display);font-weight:700;font-size:16px}
+.done-stat__label{font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+/* which lessons the wrong answers came from, worst first */
+.done-breakdown{margin-top:20px;text-align:left;width:100%;max-width:280px}
+.done-breakdown__group{border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px}
+.done-breakdown__group:last-child{border-bottom:none;margin-bottom:0}
+.done-breakdown__row{display:flex;justify-content:space-between;padding:8px 0 4px;font-size:14px}
+.done-breakdown__count{font-weight:700}
+.done-breakdown__lesson,.done-breakdown__count{cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line)}
+.done-breakdown__lesson:hover,.done-breakdown__count:hover{text-decoration-color:currentColor}
+.done-breakdown__words{display:flex;flex-wrap:wrap;gap:6px}
+.done-breakdown__word{font-family:var(--display);font-size:14px;padding:4px 9px;border:1px solid var(--line);cursor:pointer}
+.done-breakdown__word:hover{border-color:var(--ink)}
+
+/* wrong/right marking when a lesson is opened from the results screen */
+.word-row.is-wrong{border-left:3px solid var(--ink);padding-left:9px;font-weight:700}
+.word-row.is-dim{opacity:.4}
+.word-row.is-target{background:var(--surface-2);animation:target-pulse 1.2s ease 2}
+@keyframes target-pulse{0%,100%{outline:2px solid transparent}50%{outline:2px solid var(--ink)}}
 
 /* ===== Sharp diamond buttons with resting shadow ===== */
 /* clip-path hides box-shadow, so the shadow is drawn with a filter instead */
