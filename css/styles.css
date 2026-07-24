@@ -48,7 +48,12 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+/* body must be min-height, not height. With box-sizing:border-box a fixed
+   height:100% pins the body to the window and swallows padding-bottom inside
+   it, so on a page taller than the window nothing reserves space after the
+   content and the fixed action bar covers the last row of tiles. */
+html{height:100%}
+body{min-height:100%}
 body{
   font-family:var(--font);
   background:var(--bg-grad);
