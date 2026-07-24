@@ -88,6 +88,7 @@ function applyI18n(){
 /* ================= Views + browser history ================= */
 function setView(name){
   document.body.dataset.view = name;
+  syncActionbarSpace();   // the bar only shows on some views, so re-measure
   window.scrollTo({top:0, behavior:"instant"});
   // remember which screen was open, so a refresh can return to it
   const session = JSON.parse(localStorage.getItem("session") || "{}");
@@ -192,6 +193,16 @@ function updateActionbar(){
   $("#studyBtn").disabled = n === 0;
   $("#specifyBtn").disabled = selectedWords().length === 0;
   $("#deselectAllBtn").hidden = state.selected.size === 0 && state.specified.size === 0;
+  syncActionbarSpace();
+}
+
+/* Reserve exactly as much space at the bottom of the page as the action bar
+   actually takes up. A fixed guess went wrong as soon as the bar grew a row
+   (or the text wrapped in another language) and it covered the last lesson. */
+function syncActionbarSpace(){
+  const bar = $("#actionbar");
+  const shown = getComputedStyle(bar).display !== "none";
+  document.body.style.paddingBottom = shown ? (bar.offsetHeight + 16) + "px" : "16px";
 }
 
 /* wipe every lesson/word pick and go back to a blank slate */
@@ -653,6 +664,7 @@ function init(){
   });
   $("#specifyBtn").addEventListener("click", () => { renderSpecify(); go("specify"); });
   $("#deselectAllBtn").addEventListener("click", deselectAll);
+  window.addEventListener("resize", syncActionbarSpace);   // bar height changes with width
 
   $$("[data-goto]").forEach(b => b.addEventListener("click", () => history.back()));
 
