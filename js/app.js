@@ -471,18 +471,21 @@ function showDone(on){
    unknown % and count written in the middle */
 function buildDonut(unknownCount, total){
   const pct = total ? Math.round((unknownCount / total) * 100) : 0;
-  const r = 54, c = 2 * Math.PI * r;
+  // the ring is sized so 1 unit = 1 screen pixel, letting the labels use the
+  // same 12/14/16 type scale as the rest of the app and still sit balanced
+  // inside the hole
+  const r = 37, c = 2 * Math.PI * r;
   const unknownLen = c * (unknownCount / total);
   const knownLen = c - unknownLen;
   return `
-    <svg viewBox="0 0 140 140" width="140" height="140">
-      <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="16"/>
-      <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--good)" stroke-width="16"
-        stroke-dasharray="${knownLen} ${c}" transform="rotate(-90 70 70)"/>
-      <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--bad)" stroke-width="16"
-        stroke-dasharray="${unknownLen} ${c}" stroke-dashoffset="${-knownLen}" transform="rotate(-90 70 70)"/>
-      <text x="70" y="65" text-anchor="middle" class="donut-pct">${pct}%</text>
-      <text x="70" y="82" text-anchor="middle" class="donut-pct-label">${unknownCount} / ${total}</text>
+    <svg viewBox="0 0 96 96" width="96" height="96">
+      <circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="11"/>
+      <circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--good)" stroke-width="11"
+        stroke-dasharray="${knownLen} ${c}" transform="rotate(-90 48 48)"/>
+      <circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--bad)" stroke-width="11"
+        stroke-dasharray="${unknownLen} ${c}" stroke-dashoffset="${-knownLen}" transform="rotate(-90 48 48)"/>
+      <text x="48" y="46" text-anchor="middle" class="donut-pct">${pct}%</text>
+      <text x="48" y="60" text-anchor="middle" class="donut-pct-label">${unknownCount} / ${total}</text>
     </svg>`;
 }
 
@@ -490,7 +493,7 @@ function buildDonut(unknownCount, total){
 function buildSugee(){
   return `
     <div class="sugee">
-      <svg viewBox="0 0 100 40" width="100" height="40">
+      <svg viewBox="0 0 100 40" width="80" height="32">
         <rect x="6" y="10" width="34" height="22" rx="6" fill="var(--ink)"/>
         <rect x="60" y="10" width="34" height="22" rx="6" fill="var(--ink)"/>
         <path d="M40 19h20" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
